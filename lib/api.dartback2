@@ -1,0 +1,46 @@
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:chat_app/chat_message.dart';
+import 'package:flutter/animation.dart';
+
+class ChatApi {
+  static const _baseUrl = 'https://chat.leaseshe.com';
+
+  final Dio _dio = Dio();
+
+  Future<List<ChatMessage>> sendMessage(String message, {required TickerProvider vsync}) async {
+    try {
+      Response response = await _dio.post(
+        '$_baseUrl/chat-stream',
+        data: {'message': message},
+      );
+      String responseBody = response.data;
+      List<String> lines = responseBody.split('\n');
+      List<ChatMessage> chatMessages = [];
+
+      for (String line in lines) {
+        if (line.trim().isNotEmpty) {
+          Map<String, dynamic> jsonResponse = jsonDecode(line);
+          // debugPrint('API Response: $jsonResponse'); // Print API response to console
+          AnimationController animationController = AnimationController(
+            duration: Duration(milliseconds: 200),
+            vsync: vsync,
+          );
+          chatMessages.add(_parseResponse(jsonResponse, animationController));
+         
+        }
+      }
+      return chatMessages;
+    } on DioError catch (e) {
+      print('Error: $e');
+      rethrow;
+    }
+  }
+
+  ChatMessage _parseResponse(Map<String, dynamic> json, AnimationController animationController) {
+    return ChatMessage(
+      content: json['content'] ?? '',
+      animationController: animationController,
+    );
+  }
+}
