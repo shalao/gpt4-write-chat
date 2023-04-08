@@ -86,69 +86,22 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       ),
     );
   }
-/*
-void _handleSubmitted(String text) async {
-  _textController.clear();
-  setState(() {
-    _isComposing = false;
-  });
-
-  AnimationController animationController = AnimationController(
-    duration: Duration(milliseconds: 200),
-    vsync: this,
-  );
-
-  ChatMessage message = ChatMessage(
-    content: text,
-    animationController: animationController,
-  );
-  setState(() {
-    _messages.insert(0, message);
-  });
-  animationController.forward();
-
-  // Listen to the stream returned by sendMessage
-  Stream<String> responseStream = ChatApi().sendMessage(text, vsync: this);
-
-  responseStream.listen(
-    (String responseContent) {
-      print('Response: $responseContent');
-      AnimationController responseAnimationController = AnimationController(
-        duration: Duration(milliseconds: 200),
-        vsync: this,
-      );
-
-      ChatMessage responseMessage = ChatMessage(
-        content: responseContent,
-        animationController: responseAnimationController,
-      );
-      setState(() {
-        _messages.insert(0, responseMessage);
-      });
-      responseAnimationController.forward();
-    },
-    onError: (error) {
-      print('Error: $error');
-    },
-  );
-}
-*/
 
   void _handleSubmitted(String text) async {
     _textController.clear();
     setState(() {
       _isComposing = false;
     });
-    const String authorName = 'fengqi';
+
     AnimationController animationController = AnimationController(
       duration: Duration(milliseconds: 200),
       vsync: this,
     );
 
     ChatMessage message = ChatMessage(
-      content:  ValueNotifier(text),
-      authorName: authorName,
+      initialContent: text,
       animationController: animationController,
+      isSender: true,
     );
     setState(() {
       _messages.insert(0, message);
@@ -159,9 +112,9 @@ void _handleSubmitted(String text) async {
     Stream<String> responseStream = ChatApi().sendMessage(text, vsync: this);
 
     ChatMessage responseMessage = ChatMessage(
-      content: ValueNotifier(''),
-      authorName: 'ChatBot',
+      initialContent: '',
       animationController: animationController,
+      isSender: false,
     );
 
     setState(() {
@@ -183,4 +136,5 @@ void _handleSubmitted(String text) async {
       },
     );
   }
+  
 }
