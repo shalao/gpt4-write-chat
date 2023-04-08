@@ -139,14 +139,15 @@ void _handleSubmitted(String text) async {
     setState(() {
       _isComposing = false;
     });
-
+    const String authorName = 'fengqi';
     AnimationController animationController = AnimationController(
       duration: Duration(milliseconds: 200),
       vsync: this,
     );
 
     ChatMessage message = ChatMessage(
-      content: text,
+      content:  ValueNotifier(text),
+      authorName: authorName,
       animationController: animationController,
     );
     setState(() {
@@ -158,7 +159,8 @@ void _handleSubmitted(String text) async {
     Stream<String> responseStream = ChatApi().sendMessage(text, vsync: this);
 
     ChatMessage responseMessage = ChatMessage(
-      content: '',
+      content: ValueNotifier(''),
+      authorName: 'ChatBot',
       animationController: animationController,
     );
 

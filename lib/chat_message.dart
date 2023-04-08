@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:chat_app/typewriter_tween.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatMessage extends StatelessWidget {
+  // final ValueNotifier<String> content;
   final ValueNotifier<String> content;
+  final String authorName;
   final AnimationController animationController;
 
   ChatMessage({
-    required String content,
+    required this.content,
+    required this.authorName,
     required this.animationController,
-  }) : content = ValueNotifier<String>(content);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,27 +23,28 @@ class ChatMessage extends StatelessWidget {
       ),
       axisAlignment: 0.0,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10.0),
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(right: 16.0),
-              child: CircleAvatar(child: Text('A')),
+              margin: const EdgeInsets.only(right: 16.0),
+              child: CircleAvatar(child: Text('AI')), // or use your authorName
             ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text('Chatbot', style: Theme.of(context).textTheme.subtitle1),
-                  Container(
-                    margin: EdgeInsets.only(top: 5.0),
-                    child: ValueListenableBuilder<String>(
-                      valueListenable: content,
-                      builder: (BuildContext context, String value, Widget? child) {
-                        return Text(value);
-                      },
-                    ),
+                  Text('AI',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline4), // or use your authorName
+                  ValueListenableBuilder<String>(
+                    valueListenable: content,
+                    builder:
+                        (BuildContext context, String value, Widget? child) {
+                      return MarkdownBody(data: value);
+                    },
                   ),
                 ],
               ),
