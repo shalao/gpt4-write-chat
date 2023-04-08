@@ -86,7 +86,7 @@ class _ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       ),
     );
   }
-
+/*
 void _handleSubmitted(String text) async {
   _textController.clear();
   setState(() {
@@ -132,7 +132,53 @@ void _handleSubmitted(String text) async {
     },
   );
 }
+*/
 
+  void _handleSubmitted(String text) async {
+    _textController.clear();
+    setState(() {
+      _isComposing = false;
+    });
 
+    AnimationController animationController = AnimationController(
+      duration: Duration(milliseconds: 200),
+      vsync: this,
+    );
 
+    ChatMessage message = ChatMessage(
+      content: text,
+      animationController: animationController,
+    );
+    setState(() {
+      _messages.insert(0, message);
+    });
+    animationController.forward();
+
+    // Listen to the stream returned by sendMessage
+    Stream<String> responseStream = ChatApi().sendMessage(text, vsync: this);
+
+    ChatMessage responseMessage = ChatMessage(
+      content: '',
+      animationController: animationController,
+    );
+
+    setState(() {
+      _messages.insert(0, responseMessage);
+    });
+
+    responseStream.listen(
+      (String content) {
+        //打印内容并显示当前时间
+        //获取当前时间
+        DateTime now = DateTime.now();
+        print('Response time :$now  conten $content');
+        setState(() {
+          responseMessage.content.value += content;
+        });
+      },
+      onError: (error) {
+        print('Error: $error');
+      },
+    );
+  }
 }
