@@ -43,8 +43,8 @@ class ChatMessage extends StatelessWidget {
                               ? Color(0xFF0072EF)
                               : Color(0xFF313135),
                         ),
-                        // child: MarkdownBody(
-                          child: Markdown(
+                         child: MarkdownBody(
+                         // child: Markdown(
                           data: content,
                           // ...其他Markdown样式设置
                         ),
